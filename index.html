@@ -1,0 +1,1108 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>活字的一夜｜字模学徒的印刷工坊（网页动画原型） · 作品编号 400486</title>
+<style>
+:root{
+  --paper:#f4ead6;--paper2:#eee1c6;--paper3:#e5d6b6;
+  --ink:#2a241e;--muted:#6d6353;--faint:#8d8269;
+  --wood:#7c5133;--wood2:#5a3a26;--wood3:#9b6f4a;
+  --red:#a94334;--red2:#8d3527;--gold:#bb9a56;--night:#1f2b2c;--dawn:#4a5a58;
+  --line:#c9b693;--line2:#dccdae;
+  --serif:"Songti SC","SimSun","Source Han Serif SC","Noto Serif SC",serif;
+  --sans:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","Segoe UI",sans-serif;
+  --sh:0 12px 26px rgba(72,58,42,.16);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#e8dcc0 0,#e2d4b4 100%);color:var(--ink);font:15px/1.7 var(--serif)}
+.wrap{max-width:1180px;margin:auto;padding:0 24px}
+a{color:var(--red)}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px;border-radius:3px}
+
+/* 跳转链接 */
+.skip{position:absolute;left:-9999px;top:0;background:var(--paper);padding:10px 14px;z-index:99}
+.skip:focus{left:8px;top:8px}
+
+/* 顶栏 */
+.top{position:sticky;top:0;z-index:30;background:rgba(240,231,210,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.topin{height:62px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{font:800 12px/1 var(--sans);letter-spacing:.16em;color:var(--red);text-decoration:none}
+.topact{display:flex;align-items:center;gap:12px}
+.back{font:12px var(--sans);color:var(--muted);text-decoration:none}
+
+/* 通用按钮 */
+.btn{
+  font:13px/1 var(--sans);padding:9px 15px;border-radius:9px;cursor:pointer;
+  border:1px solid var(--line);background:var(--paper2);color:var(--ink);
+  transition:background .18s ease,border-color .18s ease,transform .18s ease;
+}
+.btn:hover{background:#fff8ea;border-color:var(--gold)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--red);border-color:var(--red);color:#fdf6e7}
+.btn.primary:hover{background:var(--red2)}
+.btn.ghost{background:transparent}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.sm{font-size:12px;padding:7px 11px}
+
+/* 主视觉 */
+.hero{display:grid;grid-template-columns:1fr auto;gap:26px;align-items:end;padding:34px 0 22px}
+.k{font:10px var(--sans);letter-spacing:.2em;color:var(--red)}
+h1{font-size:clamp(30px,4.6vw,50px);line-height:1.1;margin:10px 0 12px;letter-spacing:.03em}
+.hero p.lead{max-width:760px;color:#5c5143;font-size:14px;margin:0 0 10px}
+.hero p.meta{font:11px var(--sans);color:var(--faint);letter-spacing:.06em;margin:0}
+.seal{width:96px;height:96px;border:2px solid var(--red);border-radius:8px;display:grid;place-items:center;
+  text-align:center;color:var(--red);font:13px/1.35 var(--serif);letter-spacing:.12em;transform:rotate(-8deg);padding:6px}
+
+/* 主栅格 */
+.grid{display:grid;grid-template-columns:minmax(0,1.28fr) minmax(0,1fr);gap:20px;padding-bottom:26px;align-items:start}
+
+/* ===== 左：舞台 ===== */
+.stage{background:linear-gradient(180deg,#2b3638 0,#1e2a2b 100%);border-radius:16px;padding:18px;color:#f0e4cc;box-shadow:var(--sh)}
+.stagehead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:10px var(--sans);letter-spacing:.14em;color:#c9b58d}
+.beatnow{color:#f0dfb8;font-weight:700}
+.scene{position:relative;height:290px;margin:14px 0 12px;border-radius:12px;overflow:hidden;background:radial-gradient(ellipse at 48% 74%,#b9814f 0,#5b4433 30%,#1f2b2c 72%);transition:background .8s ease}
+.lamp{position:absolute;left:50%;top:-40px;width:190px;height:220px;transform:translateX(-50%);
+  background:radial-gradient(ellipse at 50% 40%,rgba(247,214,146,.55),rgba(247,214,146,0) 68%);filter:blur(3px);animation:pulse 3.6s ease-in-out infinite}
+.bulb{position:absolute;left:50%;top:26px;width:16px;height:22px;margin-left:-8px;border-radius:50% 50% 46% 46%;
+  background:radial-gradient(circle,#ffeec4,#e0a94b 70%,#a9782f);box-shadow:0 0 26px 10px rgba(240,190,110,.42)}
+.table{position:absolute;bottom:0;left:0;right:0;height:64px;background:linear-gradient(180deg,#7c5334,#4e3320);box-shadow:inset 0 3px 0 rgba(255,225,180,.18)}
+.tray{position:absolute;bottom:66px;left:7%;width:238px;height:104px;background:repeating-linear-gradient(135deg,#a87549 0 9px,#96683f 9px 18px);
+  border:4px solid #4f3524;border-radius:5px;box-shadow:inset 0 0 0 4px #c39a70;display:flex;align-items:center;justify-content:center;gap:6px}
+.scene.act-1 .tray,.scene.act-2 .tray{animation:lift 1s ease}
+.glyph{width:42px;height:52px;background:linear-gradient(180deg,#ecd9b4,#c9b184);border-radius:4px;display:grid;place-items:center;
+  color:#2b231a;font:22px var(--serif);box-shadow:0 3px 0 #8d6a44,inset 0 0 0 1px #fff5df}
+.glyph.empty{background:#6d4d33;box-shadow:none;color:transparent;opacity:.5}
+.figure{position:absolute;bottom:60px;right:12%;font-size:46px;filter:saturate(.75)}
+.paper{position:absolute;bottom:70px;right:6%;width:38%;min-height:118px;background:linear-gradient(180deg,#fbf3e2,#eadfc2);border:1px solid #c9b287;
+  border-radius:3px;padding:10px 12px;color:#2b241c;box-shadow:0 10px 18px rgba(0,0,0,.35);display:flex;gap:10px;align-items:center;justify-content:center}
+.paper small{position:absolute;top:6px;left:10px;font:9px var(--sans);letter-spacing:.16em;color:#9b8763}
+.paper b{font:600 17px/1.45 var(--serif);letter-spacing:.14em;font-weight:600}
+.paper b.v{writing-mode:vertical-rl;text-orientation:upright;max-height:96px}
+.paper.printed{animation:impress .7s ease}
+.paper::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,rgba(120,95,60,0) 45%,rgba(120,95,60,.28) 50%,rgba(120,95,60,0) 56%);opacity:0}
+.scene.act-3 .paper::after{animation:sweep 1.6s ease}
+.scene.act-4{background:radial-gradient(ellipse at 58% 76%,#e3c68d 0,#8f6f45 34%,#46595a 74%)}
+.scene.act-4 .lamp,.scene.act-4 .bulb{opacity:.16;animation:none}
+@keyframes lift{0%{transform:translateY(0)}55%{transform:translateY(-16px) rotate(3deg)}100%{transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:.85}50%{opacity:1}}
+@keyframes impress{0%{transform:translateY(10px) scale(.96);opacity:.2}100%{transform:none;opacity:1}}
+@keyframes sweep{0%{opacity:0;background-position:-120% 0}40%{opacity:1}100%{opacity:0;background-position:120% 0}}
+
+/* 幕切换与控件 */
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.actbtn{font:12px var(--sans);padding:7px 12px;border-radius:8px;cursor:pointer;border:1px solid #4b5a56;background:#2d3a3b;color:#cdbb95}
+.actbtn[aria-current="true"]{background:#c19a54;color:#251f18;border-color:#c19a54;font-weight:700}
+.ctrls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.ctrls .btn{background:#2d3a3b;border-color:#4b5a56;color:#e5d7b6}
+.ctrls .btn:hover{background:#3a4a4b;border-color:var(--gold)}
+.ctrls .btn.primary{background:#c19a54;border-color:#c19a54;color:#251f18}
+.bar{height:6px;border-radius:4px;background:#3d4a4a;overflow:hidden;margin:6px 0 12px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#c19a54,#e0c489);transition:width .4s ease}
+
+/* 字幕区 */
+.story{background:rgba(255,248,232,.06);border:1px solid rgba(201,182,147,.32);border-radius:12px;padding:14px 16px}
+.beatline{font:10px var(--sans);letter-spacing:.16em;color:#c9b58d;margin:0 0 6px}
+.story h2{margin:0 0 8px;font-size:21px;letter-spacing:.05em;color:#f6e8ca}
+.desc{font:12px/1.6 var(--sans);color:#b6a683;margin:0 0 6px}
+.narrative{margin:4px 0 8px;font-size:16px;line-height:1.85;color:#f7f0dd;min-height:60px}
+.shotnote{margin:0;font:11px/1.6 var(--sans);color:#a8977a;letter-spacing:.02em}
+.shotnote::before{content:"镜头/节奏｜";color:#c19a54}
+.staticlines{margin:4px 0 0;padding-left:0;list-style:none}
+.staticlines li{padding:8px 0;border-bottom:1px dashed rgba(201,182,147,.25)}
+.staticlines li:last-child{border-bottom:0}
+.staticlines span{display:block;font:11px var(--sans);color:#a8977a;margin-top:3px}
+.hintbox{margin:10px 0 0;font:11px var(--sans);color:#c19a54}
+
+/* ===== 右：排版台 ===== */
+.panel{background:linear-gradient(180deg,#fdf7e9,#f5ecd7);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--sh)}
+.panel h2{margin:0 0 6px;font-size:20px;letter-spacing:.05em}
+.panel p.tip{margin:0 0 12px;font:12px/1.7 var(--sans);color:var(--muted)}
+.tgroup{margin-bottom:10px}
+.tgroup>label{display:block;font:10px var(--sans);letter-spacing:.16em;color:var(--faint);margin-bottom:5px}
+.trow{display:flex;flex-wrap:wrap;gap:6px}
+.tile{width:42px;height:46px;border-radius:5px;cursor:pointer;border:1px solid #c3a878;background:linear-gradient(180deg,#f3e4c4,#dcc79d);
+  color:#2b231a;font:20px var(--serif);transition:transform .15s ease,box-shadow .15s ease}
+.tile:hover{transform:translateY(-2px);box-shadow:0 5px 10px rgba(90,70,40,.22)}
+.tile[aria-pressed="true"]{background:linear-gradient(180deg,#c9a86f,#b18d53)}
+
+.sentence{display:flex;flex-wrap:wrap;gap:6px;min-height:56px;padding:8px;border:1px dashed var(--line);border-radius:10px;background:#fdf8ec;margin-bottom:6px}
+.sentence.over{border-color:var(--red);background:#fbeae5}
+.emptyhint{font:12px var(--sans);color:var(--faint)}
+.chip{position:relative;width:44px;height:50px;border-radius:5px;background:linear-gradient(180deg,#efdcb6,#cfae7c);border:1px solid #b7955e;
+  display:grid;place-items:center;font:21px var(--serif);cursor:grab;user-select:none}
+.chip.drag{opacity:.4}
+.chip i.idx{position:absolute;top:-1px;left:2px;font:9px/1 var(--sans);font-style:normal;color:#7b6242}
+.chip .del{position:absolute;right:-6px;top:-6px;width:19px;height:19px;border-radius:50%;border:1px solid var(--red);background:#fdf6e7;color:var(--red);
+  font:11px/1 var(--sans);cursor:pointer;padding:0}
+.countline{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:2px 0 10px;font:11px var(--sans);color:var(--faint)}
+.check{margin:0 0 10px;padding:10px 12px;border-radius:10px;background:#f7efe0;border:1px solid var(--line2)}
+.check.warn{background:#fbeae5;border-color:#e2bfb4}
+.crule{font:12px/1.6 var(--sans);color:var(--muted);margin:0}
+.crule.warn{color:#8a3b2c}
+.crule::before{content:"· "}
+
+/* 双栏对照 */
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.tcol{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fdf8ec}
+.tcol h3{margin:0 0 4px;font:11px var(--sans);letter-spacing:.12em;color:var(--faint)}
+.tcol .note{margin:0 0 8px;font:11px/1.5 var(--sans);color:var(--muted)}
+.blockface{min-height:70px;display:flex;flex-wrap:wrap;gap:5px;align-items:flex-start;padding:8px;border-radius:6px;
+  background:linear-gradient(180deg,#8b5f39,#6f4a2c);border:2px solid #4b311e}
+.blockface.v{flex-direction:row-reverse;align-items:flex-start}
+.blk{width:36px;height:42px;border-radius:3px;background:linear-gradient(180deg,#f0e0be,#cbb083);display:grid;place-items:center;
+  font:20px var(--serif);color:#2b231a;transform:scaleX(-1);box-shadow:inset 0 0 0 1px #fff6e2}
+.blockface.v .blk{height:34px;width:36px}
+canvas{width:100%;height:auto;display:block;border-radius:6px;background:#f6edd7}
+.exports{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+details.src{margin-top:8px}
+details.src summary{cursor:pointer;font:12px var(--sans);color:var(--muted)}
+details.src textarea{width:100%;height:120px;margin-top:6px;font:11px/1.5 monospace;border:1px solid var(--line);border-radius:8px;background:#fffdf6;color:#3a332a;padding:8px}
+
+/* 史料对照卡 */
+.hist{background:linear-gradient(180deg,#fdf7e9,#f4e9d1);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:24px;box-shadow:var(--sh)}
+.hist h2{margin:0 0 4px;font-size:22px;letter-spacing:.05em}
+.hist .warnline{margin:0 0 16px;font:12px/1.7 var(--sans);color:var(--muted)}
+.histgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.hbox{border:1px solid var(--line2);border-radius:12px;padding:14px 16px;background:#fffdf5}
+.hbox.a{background:#f6f1e2}
+.hbox.b{background:#fbf0e9}
+.hbox h3{margin:0 0 8px;font:12px var(--sans);letter-spacing:.14em;color:var(--red)}
+.hbox ul{margin:0;padding-left:1.15em}
+.hbox li{font:13px/1.75 var(--serif);margin-bottom:5px}
+.srcs{margin:14px 0 0;font:12px var(--sans);color:var(--muted)}
+
+/* ===== 过程材料区块：分镜脚本 / 演示与成片 ===== */
+.doc{background:linear-gradient(180deg,#fdf7e9,#f4e9d1);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:24px;box-shadow:var(--sh)}
+.doc h2{margin:0 0 4px;font-size:22px;letter-spacing:.05em}
+.doc .sub{margin:0 0 14px;font:12px/1.7 var(--sans);color:var(--muted)}
+.doc h3{margin:18px 0 8px;font:12px var(--sans);letter-spacing:.14em;color:var(--red)}
+.doc ul{margin:0;padding-left:1.15em}
+.doc li{font:13px/1.8 var(--serif);margin-bottom:4px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line2);border-radius:10px;background:#fffdf5}
+.tablewrap:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+table.shots{border-collapse:collapse;width:100%;min-width:860px;font:12px/1.65 var(--sans)}
+table.shots th,table.shots td{border-bottom:1px solid var(--line2);padding:8px 10px;text-align:left;vertical-align:top}
+table.shots thead th{background:#f2e7cf;color:#5c5143;font-weight:700;white-space:nowrap}
+table.shots td.c{font-family:var(--serif);font-size:13px}
+table.shots td.n{white-space:nowrap;color:var(--muted)}
+table.shots tbody tr:nth-child(even){background:#fdf9ef}
+.tag{display:inline-block;font:11px/1 var(--sans);padding:4px 9px;border-radius:999px;border:1px solid var(--line);background:#f3ead6;color:var(--muted);white-space:nowrap}
+.tag.done{background:#eaf0e2;border-color:#c3d4ae;color:#47603a}
+.tag.todo{background:#fbeae5;border-color:#e2bfb4;color:#8a3b2c}
+ol.steps{margin:0;padding-left:1.3em}
+ol.steps li{font:13px/1.8 var(--serif);margin-bottom:5px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:5px 16px;font:12px/1.7 var(--sans);color:var(--muted);margin:0}
+.kv dt{color:#5c5143;font-weight:700;white-space:nowrap}
+.kv dd{margin:0}
+
+/* 抽屉 */
+.dnav{display:flex;gap:8px;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--line2);background:#f8f0dc}
+.dnav .btn{font-size:12px;padding:6px 10px}
+.mask{position:fixed;inset:0;background:rgba(32,26,18,.46);z-index:40;opacity:1;transition:opacity .25s ease}
+.mask[data-open="false"]{opacity:0;pointer-events:none;visibility:hidden}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(460px,94vw);background:linear-gradient(180deg,#fdf8ec,#f4ead4);
+  z-index:50;box-shadow:-16px 0 40px rgba(60,46,30,.28);display:flex;flex-direction:column;transition:transform .28s ease,visibility .28s ease}
+.drawer[data-open="false"]{transform:translateX(102%);visibility:hidden}
+.dhead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.dhead h2{margin:0;font-size:19px;letter-spacing:.06em}
+.dbody{overflow-y:auto;padding:16px 18px 40px}
+.dsec{margin-bottom:22px}
+.dsec h3{margin:0 0 8px;font:12px var(--sans);letter-spacing:.14em;color:var(--red);padding-bottom:5px;border-bottom:1px solid var(--line2)}
+.dsec p,.dsec li{font:13px/1.8 var(--serif);margin:0 0 6px}
+.dsec ul{padding-left:1.15em;margin:0}
+.todo li{color:#7a4a34}
+.dnote{background:#fbeae5;border:1px solid #e5c2b6;border-radius:9px;padding:9px 11px;font:12px/1.7 var(--sans)!important;color:#8a3b2c}
+
+footer.credit{padding:0 0 36px;font:11px/1.7 var(--sans);color:var(--faint)}
+
+@media(max-width:980px){
+  .grid{grid-template-columns:1fr}
+  .histgrid{grid-template-columns:1fr}
+}
+@media(max-width:620px){
+  .wrap{padding:0 14px}
+  .hero{grid-template-columns:1fr;padding-top:24px}
+  .seal{display:none}
+  .scene{height:240px}
+  .paper{width:44%;right:5%}
+  .twocol{grid-template-columns:1fr}
+  .figure{right:6%}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+
+<header class="top"><div class="wrap topin">
+  <span class="brand">FIELD / 05 · 活字的一夜</span>
+  <div class="topact">
+    
+    <button class="btn primary sm" id="openInfo" aria-haspopup="dialog" aria-controls="drawer">作品说明</button>
+  </div>
+</div></header>
+
+<div class="wrap">
+  <section class="hero">
+    <div>
+      <p class="k">ORIGINAL 2D ANIMATION · INTERACTIVE WORKSHOP</p>
+      <h1>活字的一夜：字模学徒的印刷工坊</h1>
+      <p class="lead">四幕网页动画原型：拣字、整理字盘、推墨试印、清晨成篇。你可以亲手排一行字，让它进入印版，再落到纸面上；然后把它导出成 PNG 或 SVG。角色与对话为原创虚构，画面为艺术化呈现，不是史料原文。</p>
+      <p class="meta">赛项：自主选题类 · 影视与动漫创作类 · 二维动画与新媒体漫画　|　作品形态：可交互网页动画原型 ＋ 动态分镜成片 v1（3 分 20 秒）</p>
+    </div>
+    <div class="seal">墨<br>与<br>字</div>
+  </section>
+
+  <main class="grid" id="main">
+    <!-- 左：动画舞台 -->
+    <section class="stage">
+      <div class="stagehead"><span>ANIMATION DESK / 01</span><span class="beatnow" id="beat">第一幕 · 灯下拣字</span></div>
+      <div class="scene act-1" id="scene" aria-hidden="true">
+        <div class="lamp"></div><div class="bulb"></div>
+        <div class="table"></div>
+        <div class="tray" id="tray"></div>
+        <div class="figure">🧑🏻‍🎨</div>
+        <div class="paper" id="paper"><small>试印 · 今夜</small><b id="printed">字因相聚而成篇</b></div>
+      </div>
+      <div class="acts" id="acts" role="group" aria-label="幕次跳转"></div>
+      <div class="ctrls">
+        <button class="btn primary" id="play">播放短片</button>
+        <button class="btn" id="prev">← 上一段</button>
+        <button class="btn" id="next">下一段 →</button>
+        <button class="btn" id="replay">从头开始</button>
+        <button class="btn" id="toggleMode">切换竖排 / 横排</button>
+      </div>
+      <div class="bar" id="bar" role="progressbar" aria-label="剧本推进进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="barfill"></i></div>
+      <div class="story">
+        <p class="beatline" id="beatline"></p>
+        <h2 id="sceneTitle"></h2>
+        <p class="desc" id="sceneDesc"></p>
+        <div id="narrative" aria-live="polite"></div>
+        <p class="shotnote" id="shotnote"></p>
+        <p class="hintbox" id="hintbox" hidden></p>
+      </div>
+    </section>
+
+    <!-- 右：排版台 -->
+    <aside class="panel">
+      <h2>亲手排一行字</h2>
+      <p class="tip">点选字模可加入句子，也可拖入下方木盘。字模可拖拽排序：键盘用 Tab 聚焦后按 ← → 移动、Delete 删除。最多 12 枚。</p>
+      <div id="types"></div>
+
+      <h2 style="margin-top:14px">已排字序</h2>
+      <div class="sentence" id="sentence" role="list" aria-label="已排字序，支持拖拽排序"></div>
+      <div class="countline">
+        <span id="charCount">7 / 12 字模</span>
+        <span id="orderText"></span>
+      </div>
+
+      <div class="check" id="check"><p class="crule">排版校验尚未运行。</p></div>
+      <div class="ctrls">
+        <button class="btn primary sm" id="checkBtn">校验这一句</button>
+        <button class="btn sm" id="fixBtn">校正</button>
+        <button class="btn sm" id="clearBtn">清空木盘</button>
+      </div>
+
+      <h2 style="margin-top:16px">试印 · 印版与纸面对照</h2>
+      <button class="btn primary" id="printBtn">推墨试印</button>
+      <div class="twocol">
+        <div class="tcol">
+          <h3>印版（反字·镜像）</h3>
+          <p class="note">字模刻的是反写字，反向朝向纸张；此处按字模在印版上的样子呈现。</p>
+          <div class="blockface" id="blockface"></div>
+        </div>
+        <div class="tcol">
+          <h3>纸面（正字·成品）</h3>
+          <p class="note">落到纸上后翻转回可读方向，由 Canvas 实时绘制，可导出。</p>
+          <canvas id="canvas" width="600" height="760" aria-label="纸面试印成品预览"></canvas>
+        </div>
+      </div>
+      <div class="exports">
+        <button class="btn sm" id="pngBtn">导出 PNG</button>
+        <button class="btn sm" id="svgBtn">导出 SVG 文件</button>
+        <button class="btn sm" id="copyBtn">复制 SVG 源码</button>
+      </div>
+      <details class="src"><summary>查看 SVG 源码（可手动复制）</summary><textarea id="svgText" readonly></textarea></details>
+    </aside>
+  </main>
+
+  <!-- 分镜脚本（影视类过程材料） -->
+  <section class="doc" id="storyboard" tabindex="-1">
+    <h2>分镜脚本 · 四幕二十镜</h2>
+    <p class="sub">依本页四幕剧本整理，每幕 5 镜，共 20 镜，旁白与本页播放的台词完全一致。时长列<b>已按成片实际配音长度确定</b>，合计 <b id="shotTotal">—</b>（不含片头片尾与观众操作演示）。这是<b>文字分镜</b>：镜头草图、角色设定与关键姿势尚未绘制；旁白与音效已在成片 v1 中按其位置落实，音效由程序合成。</p>
+    <div class="tablewrap" tabindex="0" role="region" aria-label="四幕分镜脚本表，可横向滚动">
+      <table class="shots">
+        <caption class="sr" style="position:absolute;left:-9999px">活字的一夜 分镜脚本表</caption>
+        <thead>
+          <tr><th scope="col">幕次</th><th scope="col">镜头号</th><th scope="col">画面描述</th><th scope="col">镜头运动</th><th scope="col">旁白文本</th><th scope="col">时长（秒）</th><th scope="col">声音设计</th></tr>
+        </thead>
+        <tbody id="shotBody"></tbody>
+      </table>
+    </div>
+    <h3>镜头号规则与制作约定</h3>
+    <ul>
+      <li><b>编号规则：</b>SC - 幕号 - 镜号，如 SC-03-04 为第三幕第 4 镜；镜头号在成片剪辑与配音表之间保持一致，便于对轨。</li>
+      <li><b>镜头运动：</b>与本页每句下方的「镜头/节奏」说明同源，剪辑时以该列为依据；原说明中带括号的时长（如「约 3 秒」）为初版设想，以本表「时长（秒）」列为准。</li>
+      <li><b>画面描述：</b>仅描述构图与道具关系，不含具体美术细化；角色造型、服装与手部姿势需另出设定稿。</li>
+      <li><b>声音设计：</b>本页不内置任何音频文件（保持静音）；「待配音」为原占位标记，成片 v1 已按该列位置落实旁白与音效，口型帧仍未制作。</li>
+      <li><b>与本页的关系：</b>本表由页面剧本数据直接生成，剧本改动后本表同步更新，不会出现文案与分镜不一致的情况。</li>
+    </ul>
+  </section>
+
+  <!-- 演示与成片 -->
+  <section class="doc" id="film" tabindex="-1">
+    <h2>演示与成片</h2>
+    <p class="sub"><b>成片 v1 已制作（动态分镜版，时长 3 分 20 秒）。</b>画面取本页四幕舞台的实时渲染，按 20 镜分镜逐镜取景并施加镜头运动，配旁白、程序化音效、字幕、片头片尾。<b>它不是完整的角色动画成片</b>：角色设定稿、关键姿势与口型帧仍未制作，画面中的人物仍以占位呈现。本节说明演示视频的录制参数、录制脚本，以及成片中仍未完成的部分。</p>
+
+    <h3>一、演示视频录制建议参数</h3>
+    <dl class="kv">
+      <dt>分辨率与帧率</dt><dd>1920×1080（16:9）、30 fps。</dd>
+      <dt>时长</dt><dd>完整四幕约 3 至 4 分钟：剧本连续播放按分镜表时长合计 187 秒（约 3 分 7 秒），另含一次「亲手排一句 → 校验 → 推墨试印 → 导出 PNG」的操作演示。</dd>
+      <dt>浏览器状态</dt><dd>缩放 100%，关闭系统「减少动效」（否则动画会降级为静态分段，录不到镜头运动）。</dd>
+      <dt>封装与编码</dt><dd>MP4 / H.264，音频为系统内录或另行配音；码率与音量标准由团队在成片阶段确定。</dd>
+      <dt>画面范围</dt><dd>建议录制整个浏览器窗口，保留顶部标题与幕次指示，便于评审判断观看的是原型页面。</dd>
+    </dl>
+
+    <h3>二、建议的录制脚本（按此顺序一遍录完）</h3>
+    <ol class="steps">
+      <li>打开页面，先停在主视觉 3 秒，让标题与「作品形态：可交互网页动画原型」入画。</li>
+      <li>点「播放短片」，完整播放四幕；期间不再操作，保留一次连续的叙事节奏。</li>
+      <li>播放结束后点「从头开始」，回到第一幕，切换到右侧排版台。</li>
+      <li>现场排一句：点选或拖入 7 枚左右字模，用方向键调整一次顺序，点「校验这一句」，再点「校正」。</li>
+      <li>点「推墨试印」，展示印版反字与纸面正字的双栏对照，切换一次「竖排 / 横排」。</li>
+      <li>点「导出 PNG」，打开作品说明抽屉并滚动展示各分区，最后停在分镜脚本表。</li>
+    </ol>
+
+    <h3>三、成片待完成清单</h3>
+    <div class="tablewrap" tabindex="0" role="region" aria-label="成片待完成清单表，可横向滚动">
+      <table class="shots">
+        <thead><tr><th scope="col">项目</th><th scope="col">状态</th><th scope="col">说明</th></tr></thead>
+        <tbody>
+          <tr><td>剧本（四幕二十句）</td><td><span class="tag done">已完成</span></td><td>台词终稿已写入页面，角色与对话为原创虚构。</td></tr>
+          <tr><td>文字分镜表</td><td><span class="tag done">已完成</span></td><td>即本页「分镜脚本」20 镜，由剧本数据生成。</td></tr>
+          <tr><td>交互原型（本页）</td><td><span class="tag done">已完成</span></td><td>可运行、可操作、可导出，功能走查已自行完成。</td></tr>
+          <tr><td>画面分镜草图</td><td><span class="tag todo">待完成</span></td><td>20 镜的构图草图、角色设定与关键姿势稿尚未绘制；成片 v1 的取景为对舞台的裁切与推移，非手绘分镜。</td></tr>
+          <tr><td>角色设计与口型</td><td><span class="tag todo">待完成</span></td><td>页面与成片均为占位呈现；口型帧尚未制作，对白镜头以字幕与语气区分。</td></tr>
+          <tr><td>配音（四幕旁白与台词）</td><td><span class="tag done">已完成</span></td><td>成片 v1 已配 20 镜旁白，含 3 处虚构对白（换音色区分）。<b>当前为 AI 合成占位音轨</b>，建议由团队真人重录替换。</td></tr>
+          <tr><td>音效与环境音</td><td><span class="tag done">已完成</span></td><td>灯芯、木质、字模、袖口、墨刷、纸声六类音效与按幕变化的环境底噪，全部由程序合成，无第三方音频素材。</td></tr>
+          <tr><td>配乐</td><td><span class="tag todo">待完成</span></td><td>风格与版权方案未定，如使用第三方音乐需确认授权。</td></tr>
+          <tr><td>转场</td><td><span class="tag done">已完成</span></td><td>幕间用淡入过渡、幕内硬切；原计划的同形体匹配与叠画未制作，留待下一版。</td></tr>
+          <tr><td>字幕</td><td><span class="tag done">已完成</span></td><td>成片已内嵌 ASS 字幕（旁白与对白分色），可直接用于无声播放；另出独立 SRT 供无障碍与检索使用。</td></tr>
+          <tr><td>输出规格与成片剪辑</td><td><span class="tag done">已完成</span></td><td>1920×1080 / 30 fps / H.264，含片头与片尾卡；片尾署名按团队分工填写，见《成片制作说明》。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sub" style="margin-top:12px">说明：标记为「已完成」的项均指已实际存在、可打开核对的成果（成片 v1 为动态分镜版，画面为舞台渲染，角色动画未制作）；其余各项如实列为待完成，未开展的不写为已完成。参赛时以本页 <b>加上</b> 成片视频、配音轨与分镜草图共同提交。</p>
+  </section>
+
+  <!-- 史料对照卡 -->
+  <section class="hist" id="hist" tabindex="-1">
+    <h2>史料对照卡：记载与本页舞台化表达的区别</h2>
+    <p class="warnline">本卡片为依据公开介绍整理的要点概述，<b>未引用《梦溪笔谈》原文</b>，也不构成印刷史学术结论。需要准确文字与断代的，请核对原著或权威整理本并请专业教师复核。</p>
+    <div class="histgrid">
+      <div class="hbox a">
+        <h3>A · 沈括《梦溪笔谈》关于毕昇活字的常见公开要点</h3>
+        <ul>
+          <li>记载对象为毕昇所创的活字印刷方法，时代通常归于北宋；各类介绍多将其列为有明确文献记载的早期活字实践。</li>
+          <li>用材为胶泥（泥活字）：刻字后经火烧加固，一枚一字。</li>
+          <li>排版环节提到以铁范（铁板）承字，并以黏性辅料（常见说法为松脂、蜡与纸灰之类）铺填固定。</li>
+          <li>强调可重复组合、多次使用：同一批字印可反复排成不同内容。</li>
+          <li>性质为古代笔记体的见闻记录，与现代工艺图纸或技术专利文本不同，细节留有解释空间。</li>
+        </ul>
+      </div>
+      <div class="hbox b">
+        <h3>B · 本页为了舞台效果做了哪些改动</h3>
+        <ul>
+          <li><b>材质不同：</b>页面出现的是木质字块与木盘，而上述记载所说为胶泥（泥活字）。木色调仅为便于视觉辨识的美术选择。</li>
+          <li><b>场景不同：</b>油灯、案面、连续劳动的一夜等，均为艺术化舞台调度，不以某处作坊为复原对象。</li>
+          <li><b>人物与台词虚构：</b>学徒角色、旁白与所有对话为原创虚构，不代表任何真实历史人物的言行。</li>
+          <li><b>流程压缩：</b>拣字、上墨、覆纸、刷印、揭纸的顺序被压缩成四幕，工序细节经过简化。</li>
+          <li><b>结论边界：</b>本页不主张任何关于印刷史起源、断代或工艺还原度的学术结论。</li>
+        </ul>
+      </div>
+    </div>
+    <p class="srcs">已有真实来源链接（沿用本项目原有引用，未新增）：<br>
+      <a href="https://www.zjskw.gov.cn/art/2022/5/16/art_1229614965_46849.html" target="_blank" rel="noopener">浙江省社会科学界联合会：《梦溪笔谈》介绍页 ↗</a>
+    </p>
+  </section>
+
+  <footer class="credit">
+    本页所有画面、字模与音效位标记均由原创网页图形与代码生成，不含第三方影视、图片或音频素材。<br>
+    角色、旁白与对话为原创虚构。此为交互网页原型，<b>不能替代动画成片</b>；参赛需由学生团队补充分镜草图、角色设计、配音、历史审读与成片制作记录。
+  </footer>
+</div>
+
+<!-- 作品说明抽屉 -->
+<div class="mask" id="mask" data-open="false"></div>
+<aside class="drawer" id="drawer" data-open="false" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" tabindex="-1">
+  <div class="dhead">
+    <h2 id="drawerTitle">作品说明</h2>
+    <button class="btn sm" id="closeInfo">关闭 · Esc</button>
+  </div>
+  <div class="dnav">
+    <span style="font:11px/1.9 var(--sans);color:var(--faint)">页面内另有：</span>
+    <button class="btn sm" data-jump="#storyboard">↓ 分镜脚本</button>
+    <button class="btn sm" data-jump="#film">↓ 演示与成片</button>
+    <button class="btn sm" data-jump="#hist">↓ 史料对照卡</button>
+  </div>
+  <div class="dbody">
+    <section class="dsec">
+      <h3>1 · 作品简介与目标观众</h3>
+      <p><b>作品名称：</b>活字的一夜：字模学徒的印刷工坊</p>
+      <p><b>参赛赛项：</b>自主选题类 · 影视与动漫创作类 · 二维动画与新媒体漫画</p>
+      <p><b>当前形态：</b>可交互网页动画原型（单文件 HTML，CSS/JS 绘制，无外部依赖）</p>
+      <p><b>简介：</b>作品以一位虚构的手工字模学徒为主视角（时间背景作艺术化处理，不指向具体朝代与地点），用四幕短剧讲一夜之间拣字、排版、试印到成篇的过程。页面把叙事与操作接在一起：观众排出的那一行字，会真正进入印版和纸面。</p>
+      <p><b>目标观众：</b>中小学与非遗科普场景的读者；高校通识课与数字媒体专业课堂；印刷文化爱好者。也作为团队内部的教学示范原型。</p>
+      <p><b>预计体验时长：</b>交互浏览约 3 至 5 分钟（不含后续成片）。</p>
+    </section>
+    <section class="dsec">
+      <h3>2 · 创新点</h3>
+      <ul>
+        <li><b>一、可参与的活字排版叙事。</b>观众不是单纯看片：通过点选、拖拽、删除排出一句话，这行字直接驱动舞台上的字盘道具、尾声的画面文案与输出结果，叙事状态与操作状态共用同一数据源，形成「操作—校验—再叙事」的闭环。</li>
+        <li><b>二、印版反字与纸面正字对照。</b>大量科普动画只呈现纸上的成品；本作同时给出印版（镜像反字）与纸面（正字）双栏对照，把「为什么活字要刻成反字」这一关键认知点可视化，并支持导出 PNG 与 SVG，让成果可带出展播现场。</li>
+        <li><b>三、史料与舞台化表达分离。</b>页面设置独立的史料对照卡，一列写明《梦溪笔谈》相关记载的公开要点概述，另一列逐条列出本页为舞台效果所做的改动（木质而非记载中的胶泥、虚构角色与对话、意象化的灯光与纸光），叙事归叙事，史料归史料。</li>
+        <li><b>与常见非遗科普动画的差异：</b>常见做法是线性 MG 图表加配音解说，观众一次性看完、无法操作；本作提供可操作、可校验、可导出的闭环，并把「清楚标注边界」本身作为设计要求的一部分。</li>
+      </ul>
+    </section>
+    <section class="dsec">
+      <h3>3 · 技术路线</h3>
+      <ul>
+        <li><b>结构：</b>单个 HTML 文件，零构建、零第三方依赖；可直接双击打开或托管到任意静态服务器。</li>
+        <li><b>动画：</b>全部使用 CSS <code>@keyframes</code> 与 <code>transition</code>，JavaScript 只负责任务调度与状态同步；未使用任何外部动画/绘图库（无 GSAP、Three.js、Lottie 等）。</li>
+        <li><b>绘制：</b>字模、木盘、油灯、案面为 CSS 图形（渐变、盒阴影、圆角）绘制；纸面成品由 Canvas 2D 实时绘制，包含纸色渐变、纤维噪点、双线边框与朱印。</li>
+        <li><b>导出：</b>PNG 使用 <code>canvas.toBlob</code> 配合 Blob URL 触发下载；SVG 由脚本按坐标拼接字符串生成，提供文件下载与源码复制两种方式。</li>
+        <li><b>状态管理：</b>以一个 JavaScript 数组作为「这一行字」的唯一数据源，字盘、句子顺序、校验结果、印版、画布与导出文件名均由它派生，避免界面之间状态不一致。</li>
+        <li><b>无障碍与降级：</b>尊重 <code>prefers-reduced-motion</code>，减少动效时改为静态分段整幕呈现；全流程键盘可达，焦点样式统一使用 <code>:focus-visible</code>。</li>
+      </ul>
+    </section>
+    <section class="dsec">
+      <h3>4 · 操作与运行说明</h3>
+      <ul>
+        <li><b>运行：</b>双击本 HTML 即可运行，或在文件目录执行 <code>python -m http.server</code> 后浏览器访问；除史料链接外不需要联网。</li>
+        <li><b>环境：</b>建议使用支持 Canvas 与 Blob 的现代浏览器（Chrome / Edge / Firefox / Safari 近年版本）；建议分辨率 1280×720 起，窄屏自动切为单列。</li>
+        <li><b>剧本操作：</b>播放/暂停、上一段、下一段、第一至第四幕直接跳转、从头开始；右上角幕次按钮可跳幕。</li>
+        <li><b>排版操作：</b>点选或拖入字模 → 句子顺序可拖拽调整 → 点「校验这一句」查看提示 → 需要时点「校正」 → 点「推墨试印」更新双栏对照 → 导出 PNG / SVG。</li>
+        <li><b>已知限制：</b>导出依赖浏览器的 Canvas 与 Blob 支持；竖排/横排切换会同时影响纸面成品与导出文件；未做服务端保存，刷新后句子回到默认。</li>
+      </ul>
+    </section>
+    <section class="dsec">
+      <h3>5 · 验证与测试自查</h3>
+      <p><b>已完成（团队自行核对）：</b></p>
+      <ul>
+        <li><b>公开资料自行核对：</b>史料要点依据公开的《梦溪笔谈》解读资料核对，<b>未引用原文</b>；页面为舞台化表达，不是史料原文或器物复原。</li>
+        <li><b>页面功能走查：</b>按操作路径逐项验证导出文件（PNG 导出、SVG 下载与 SVG 源码复制）、键盘操作（全部操作可用键盘完成、方向键移动与 Delete 删除、<code>:focus-visible</code> 焦点样式）、移动端布局（980px / 620px 单列断点）、减少动效（<code>prefers-reduced-motion</code> 降级路径）、边界提示（排版校验与“校正”提示）；JavaScript 语法通过 <code>node --check</code> 校验。</li>
+        <li><b>代码与第三方资源自查：</b>无外部依赖、画面与字模均由 HTML/CSS/Canvas 代码绘制、无未授权第三方素材。</li>
+      </ul>
+      <p><b>尚未开展（如实列出，不作已完成陈述）：</b></p>
+      <ul>
+        <li><b>专业审阅：</b>未邀请印刷史方向教师或文献专业人员复核史料卡。</li>
+        <li><b>实物核对：</b>未开展真实活字实物或馆藏文物的测绘与比对，字模与版面为程序化绘制的示意。</li>
+        <li><b>用户测试：</b>未开展目标用户任务测试，无可玩性、理解度数据。</li>
+        <li><b>成片与制作材料：</b>文字分镜表已在页面内补出（四幕二十镜，见页面下方「分镜脚本」）；画面分镜草图与故事板、角色设计（现为占位呈现）、成片配音（音效位与口型帧均为留空标记）均尚未完成。</li>
+      </ul>
+      <p><b>后续计划：</b></p>
+      <ul>
+        <li>邀请印刷史方向教师或文献专业人员复核史料卡并修订表述。负责人：吴昊（团队负责人）；时间：赛后 1 个月内。</li>
+        <li>查阅公开整理本核对史料要点出处，逐条标注引用来源。负责人：吴昊（团队负责人）；时间：赛后 1 个月内。</li>
+        <li>组织目标用户任务测试，记录完成率、误操作与主观反馈。负责人：吴昊（团队负责人）；时间：赛后 2 个月内。</li>
+      </ul>
+      <p><b>一句话原则：本材料的表述与作品实际完成状态一致，未开展的专业审阅、实地测绘与用户测试均如实列为后续工作，未以任何形式宣称已完成。</b></p>
+    </section>
+    <section class="dsec">
+      <h3>6 · AI 使用与素材说明</h3>
+      <ul>
+        <li><b>AI 辅助：</b>本页在 AI 辅助下完成代码结构搭建与文案起草（含四幕旁白、镜头节奏说明、作品说明文本），已由团队成员逐条校对修改。</li>
+        <li><b>画面与字模：</b>全部由 HTML/CSS/Canvas 代码绘制，未使用任何图片素材。</li>
+        <li><b>音频：</b>无第三方影视素材、无第三方音乐音效；当前页面没有配音，相关位置保留标记。</li>
+        <li><b>团队原创贡献：</b>主创 吴昊（团队负责人）：整体设计、四幕结构与分镜定稿、最终把关。技术实现 徐志：字模与字盘交互、排版校验规则、试印对照、PNG/SVG 导出、成片取景与运镜、字幕与成片剪辑。内容与设计 苏张柏绮：四幕剧本与分镜、旁白与音效设计。全部代码、文案与视觉元素由团队自行完成，未使用第三方图片、字体、图标或音频素材。</li>
+      </ul>
+    </section>
+    <section class="dsec">
+      <h3>7 · 边界声明</h3>
+      <ul>
+        <li>本作品为<b>艺术化呈现</b>：场景、道具、节奏均为舞台化处理，不是史料原文，不是器物复原，不构成印刷史学术结论。</li>
+        <li>角色、旁白与对话为<b>原创虚构</b>，不代表任何真实历史人物的言行。</li>
+        <li>史料对照卡中的要点为依据公开介绍整理的概述，<b>未引用《梦溪笔谈》原文</b>；如需准确文字，请核对原著或权威整理本。</li>
+        <li>排版校验中的「字数、重复字、语序建议」为本页<b>演示规则</b>，用于交互体验，不是语言学或校对结论。</li>
+      </ul>
+    </section>
+    <section class="dsec">
+      <h3>8 · 艺术风格说明（视觉设定）</h3>
+      <ul>
+        <li><b>配色与留白：</b>整体取仿古籍纸色体系——纸面 <code>#f4ead6</code> 系渐变、墨色 <code>#2a241e</code>、朱色 <code>#a94334</code>、夜景 <code>#1f2b2c</code>。纸面画布上下各留 130px 余白、左右各留 62px，正文四周保留双线边框，以「疏可走马」的留白压住信息密度。</li>
+        <li><b>字模造型：</b>长方形木块，比例约 42×52（宽:高≈0.8:1），圆角 4px；顶面加内描边高光、底部加 3px 实心投影模拟厚度，侧面用木色渐变。造型为<b>便于辨识的舞台化示意</b>，未做实物测绘，此点已在史料对照卡中声明。</li>
+        <li><b>纸纹与朱印：</b>纸纹由 Canvas 绘制 1500 个随机纤维点（尺寸约 1.6×1.1px，透明度 0.012–0.062），叠在冷暖渐变的纸色底上；朱印为右下角 62×62 朱红方块加一个「印」字，模拟钤印位置，非任何具体印鉴的摹写。</li>
+        <li><b>竖排 / 横排的取舍：</b>默认竖排（贴近古籍阅读习惯，字序自上而下、列序自右向左，每列最多 11 字）；横排作为现代阅读习惯与低龄观众的备选。两套版式共用同一份「已排字序」数据，只是坐标算法不同，因此切换不会造成内容不一致。</li>
+        <li><b>动效节奏：</b>全部为 CSS <code>@keyframes</code> / <code>transition</code>，JavaScript 只做调度。单句停留时长按字数估算（900ms + 95ms×字数，夹在 1.8–5.2 秒之间），段间留呼吸；镜头动作（推、摇、擦印）用 0.7–1.6 秒的短动画示意，不做写实模拟。</li>
+        <li><b>减少动效降级方案：</b>系统开启 <code>prefers-reduced-motion</code> 时，取消全部动画与过渡，改为整幕五句一次性静态列出，并停用自动播放按钮，改为「上一段 / 下一段 / 跳幕」逐句阅读。所有叙事信息在降级路径下不丢失。</li>
+        <li><b>素材来源：</b>字模、木盘、油灯、案面、纸面、朱印<b>全部由 HTML / CSS / Canvas 代码绘制</b>，无第三方图片、字体、图标或音频素材；文字仅使用系统字体栈（Songti SC / SimSun / Noto Serif SC / 微软雅黑 等），未内嵌或引用任何外部字体文件。</li>
+      </ul>
+    </section>
+    <section class="dsec">
+      <h3>9 · 传播与教学使用建议</h3>
+      <ul>
+        <li><b>适用场景：</b>① 非遗与传统文化教育（活字印刷主题的通识课、社团活动）；② 校园文化活动（读书节、科技人文节展台，可现场排字并导出带走）；③ 中小学研学与课后服务（配合手工活字体验课使用）。</li>
+        <li><b>建议流程（约 15 至 20 分钟）：</b>观看 3 分钟 → 亲手排一句 → 讨论 → 导出自己的那一页。</li>
+        <li><b>第一步 观看（约 3 分钟）：</b>完整播放四幕，或由教师按幕分段讲解「拣字—整理—试印—成篇」四个环节。</li>
+        <li><b>第二步 亲手排一句（约 5 分钟）：</b>每人排出一句 5 至 12 字的话，用方向键调整顺序，点「校验这一句」看提示，再点「推墨试印」，观察印版反字与纸面正字的差别。</li>
+        <li><b>第三步 讨论（约 8 分钟）：</b>围绕下面两个问题分组交流，每组派代表复述一句本组排出的句子。</li>
+        <li><b>第四步 带走成果（约 2 分钟）：</b>导出 PNG 或 SVG，打印或贴在班级展示栏；导出图角落带「原型演示 · 非史料复刻」说明行，避免被误当作史料图像使用。</li>
+        <li><b>讨论问题 1：</b>活字为什么是一种「拆分重组」的思维？把一句话拆成单字、再重排成别的话——这种先拆后组的做法，在你写作文、整理笔记或写程序的时候能怎么用？</li>
+        <li><b>讨论问题 2：</b>试印偏斜时，学徒选择重排一次而不是将就。如果让你在「赶快交出去」和「重做一遍」之间选，你会怎么判断？留在纸上的痕迹，和留在屏幕上的痕迹有什么不同？</li>
+        <li><b>使用提示：</b>本页含虚构角色与台词，用于讨论「技术如何改变知识的复制与传播」是合适的；若涉及具体断代、材质与工艺结论，请回到史料对照卡并核对权威资料。</li>
+      </ul>
+    </section>
+    <section class="dsec">
+      <h3>10 · 版本与变更记录</h3>
+      <ul>
+        <li><b>v1（2026-10-18，填写人：吴昊）</b>：确立四幕短剧结构与原创虚构角色；完成网页原型初稿，含逐句播放、上一段 / 下一段、四幕跳转、30 枚字模点选排句与拖拽排序。</li>
+        <li><b>v2（2026-10-18，填写人：吴昊）</b>：新增印版反字与纸面正字双栏对照；新增 PNG / SVG 导出与 SVG 源码复制；新增史料对照卡（记载要点与本页改动分列）与作品说明抽屉；补充竖排 / 横排切换与 <code>prefers-reduced-motion</code> 降级路径。</li>
+        <li><b>v3（2026-10-18，填写人：吴昊）</b>：补充分镜脚本（四幕二十镜文字分镜表）与「演示与成片」分区；补写艺术风格说明、传播与教学使用建议、版本与变更记录；导出图（PNG / SVG）增加「活字的一夜 · 原型演示 · 非史料复刻」说明行。</li>
+        <li><b>v4（2026-10-22，填写人：吴昊）</b>：提交版整理——片尾署名与制作人员按真实分工填写（选题·剧本·分镜·交互设计 吴昊 苏张柏绮 徐志，指导教师 高锁 高潇潇）；版本记录补入实际日期并接入公开仓库；全文去除占位表述。</li>
+      </ul>
+      <p class="dnote">以上日期与公开仓库的提交历史一致，可逐次核对：github.com/junming49/blue-boundary-coral-reef/commits/main 。每一次实质改动同步追加一条记录，便于评审追溯过程。</p>
+    </section>
+  </div>
+</aside>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ================= 1 · 剧本数据：四幕，每幕 5 段 ================= */
+  var ACTS = [
+    {
+      title: '第一幕 · 灯下拣字',
+      sub: '每一枚字模都有自己的位置',
+      desc: '场景：夜，工坊内景。案头一盏油灯是唯一主光，画面以暖黄为主；窗侧渗进冷蓝夜光，勾出人物轮廓。桌上木盘未整理，字模散乱排列。',
+      tempo: '节奏：慢起。开场一个约 3 秒的长镜由门口推到案头，随后在中景与手部近景之间交替；每读一段切换一次镜头，段间留 0.4 秒呼吸。',
+      lines: [
+        { t: '夜色压到窗纸上，工坊里只剩一盏灯还醒着。灯芯每爆一次，墙上的人影就晃一下。', s: '远景缓推；烛火为画面唯一动态光源。',
+          img: '工坊内景全景。窗纸透出深蓝夜色，案头油灯是唯一光源，墙上人影随灯芯晃动。', dur: 11, aud: '环境底噪：夜虫、远处风声（待配音）；灯芯爆裂音效位留空。' },
+        { t: '学徒把木盘端到灯下，先用袖口擦去盘面的浮灰，再顺着凹槽一格一格看过去。', s: '过肩近景，横向跟手；焦点在指尖与字模棱边之间来回切换。',
+          img: '过肩视角。木盘入画，盘面浮灰被袖口擦去，字模散乱排列，木格凹槽清晰。', dur: 10, aud: '袖口擦过木盘的摩擦声（待配音）；木盘落桌一记闷响。' },
+        { t: '他要找的是一枚「字」。盘里上百枚木头方块长得几乎一样，区别只在刻痕的深浅与笔画的收尾。', s: '微距，字模逐个掠过；停顿两次，制造「看错—纠正」的节拍。',
+          img: '微距。字模逐个掠过，刻痕深浅与笔画收尾的特写，两次停顿制造「看错—纠正」。', dur: 11, aud: '木质轻碰声，掠过时连续、停顿时收住（待配音）。' },
+        { t: '「它们看着一样，可谁也替不了谁。」', s: '字幕：虚构对白。切至学徒侧脸近景；口型帧留待配音完成后制作，此处为占位。',
+          img: '学徒侧脸近景，灯光勾出鼻梁与下颌轮廓，背景虚化为暗部。', dur: 5, aud: '台词配音（待录制）；口型帧待配音后制作，此处留空。' },
+        { t: '灯又爆了一次。他终于捏住那枚对的「字」，轻轻一提，字模离开木槽，发出很轻的一声。', s: '特写，灰尘在光柱里浮起；音效位标注，成片 v1 已加入合成音效。',
+          img: '特写。手指捏住字模两侧向上提起，字模离开木槽，灰尘在光柱中浮起。', dur: 11, aud: '灯芯爆裂一声（待配音）；字模离槽的轻响。' }
+      ]
+    },
+    {
+      title: '第二幕 · 整理字盘',
+      sub: '字序决定读法',
+      desc: '场景：同景，时间推进约一小时。灯油略浅，桌面多了一块擦墨的旧布。木盘中央的字模渐渐排成一行，四周仍是散字。',
+      tempo: '节奏：中速。俯拍与手部近景交替，靠「放歪—转正—对齐」的重复动作建立节奏感，第三次重复时整体提速。',
+      lines: [
+        { t: '字要一枚一枚转正。放反了、放歪了，印出来就会左右颠倒、行列不齐。', s: '俯拍木盘，以半透明网格线辅助读数。',
+          img: '俯拍木盘全景。半透明网格线辅助读数，行首已排三枚，四周仍是散字。', dur: 10, aud: '字模落入木槽的连续轻响（待配音）；无对白。' },
+        { t: '他捏着字模的侧面轻轻一转，让字口朝上，再推进槽底，指尖压两下确认已经落稳。', s: '手部特写，三个连贯动作一气呵成；此处可做 8 帧循环。',
+          img: '手部特写。捏住字模侧面转正、推进槽底、指尖压两下，三个动作连成一条。', dur: 10, aud: '字模压实的双击声（待配音）；动作可做 8 帧循环。' },
+        { t: '同一枚字可以反复使用。今天的句子用完，字模回到盘里，明天又会排成别的句子。', s: '中景，同一枚字模在不同句子中先后出现两次，转场用同形体匹配。',
+          img: '中景。同一枚字模先后出现在两行不同的试印中，用同形体匹配完成转场。', dur: 10, aud: '转场擦拭音（待配音）；字模回盘的散落声。' },
+        { t: '「排错了不要紧，重排就是。纸是诚实的，它会照着印。」', s: '字幕：虚构台词。镜头缓慢拉远至全景，为下一幕的印刷动作留出空间。',
+          img: '由手部中景缓慢拉远至工坊全景，为下一幕的印刷动作预留空间。', dur: 8, aud: '台词配音（待录制）；拉远过程中保留环境底噪。' },
+        { t: '排到最后一位时他停了很久。留白也是一种顺序——在哪里停，句子就在哪里换气。', s: '静止近景；画面只剩手指与最后一枚字模，制造停顿。',
+          img: '静止近景。画面只剩手指与最后一枚字模，木盘其余部分隐入暗部。', dur: 10, aud: '静音约 1 秒后接环境底噪（待配音），制造停顿。' }
+      ]
+    },
+    {
+      title: '第三幕 · 推墨试印',
+      sub: '墨要匀，手要稳',
+      desc: '场景：同景，新增道具：墨刷、墨盘、宣纸与一块压纸薄板。光源仍为单点，纸面反光成为画面第二个光源。',
+      tempo: '节奏：快起慢收。以一组 1.5 秒短镜完成上墨、覆纸、刷印三个动作，随后接一个 4 秒长镜记录揭纸瞬间。',
+      lines: [
+        { t: '墨刷在字面上顺时针打圈，要薄、要匀。厚一分则糊，薄一分则缺。', s: '俯拍墨刷轨迹，以半透明圆环指示方向。',
+          img: '俯拍印版。墨刷顺时针打圈，墨层由薄转匀，半透明圆环指示方向。', dur: 10, aud: '刷毛擦过木面的沙沙声，节奏均匀（待配音）。' },
+        { t: '纸轻轻覆上去，不能拖。手一抖，纸下的字就错开半个字身。', s: '侧面近景，纸自上而下入画；背景加入轻微景深虚化。',
+          img: '侧面近景。宣纸自上而下覆上印版，背景轻微虚化，纸边与版心对齐。', dur: 9, aud: '纸面落下的轻响（待配音）；无对白。' },
+        { t: '棕刷从版心向外擦过，力道先轻后重，让笔画边缘略微洇开一条线。', s: '跟随棕刷横向移动的短镜；此处预留 3 个替帧便于后续替换。',
+          img: '跟随棕刷横向移动的短镜，由版心向外擦过，力道先轻后重。', dur: 9, aud: '棕刷摩擦声由弱转强（待配音）；预留 3 个替帧待替换。' },
+        { t: '揭纸的一瞬最见分晓：凑近看，笔画两侧应当干净，且每一行都压在同一条水平线上。', s: '长镜记录揭纸；此处画面与右侧「纸面正字」面板同源。',
+          img: '长镜记录揭纸瞬间，纸面正字逐渐显现；画面与右侧「纸面正字」面板同源。', dur: 10, aud: '纸与版分离的撕裂声、纸张翻起的脆响（待配音）。' },
+        { t: '第一次试印偏斜了一点点。他不急着改，先在纸角补一个记号，然后重新校正字盘。', s: '近景切特写；画面保留第一张试印纸作为纠错道具。',
+          img: '近景切特写。保留第一张偏斜的试印纸作为纠错道具，纸角补一个记号。', dur: 10, aud: '笔尖点纸的一声（待配音）；字盘校正的连续轻响。' }
+      ]
+    },
+    {
+      title: '第四幕 · 清晨成篇',
+      sub: '让错位的字回到句子里',
+      desc: '场景：时间跳至拂晓。窗纸由深蓝转灰白，油灯熄灭，冷空气让屋内浮起淡淡的雾白。桌上摊着一叠试印纸。',
+      tempo: '节奏：收束。以长镜为主，配合两次缓慢横移，最后停在静止构图，尾字留 3 秒再出标题卡。',
+      lines: [
+        { t: '天亮以后，灯光就变得多余了。窗外的灰白一点点盖过案头的黄。', s: '固定长镜，色温由暖转冷；灯在一帧之内熄灭。',
+          img: '固定长镜。窗纸由深蓝转灰白，油灯在一帧之内熄灭，屋内浮起淡淡雾白。', dur: 8, aud: '晨鸟与远处风声（待配音）；灯熄灭处不做音效。' },
+        { t: '他把夜里印过的纸摊开，挑出最接近的几张，压在薄板下面慢慢理平。', s: '俯拍桌面，多张试印纸错落排列；此处可用叠画过渡。',
+          img: '俯拍桌面。多张试印纸错落摊开，压在薄板下慢慢理平，可用叠画过渡。', dur: 9, aud: '纸张翻动与抚平的连续声（待配音）。' },
+        { t: '清样上还有一处不够齐。他在盘里重排了一次，让那枚错位的字回到句子该在的位置。', s: '手部特写，回放第二幕的动作，但节奏更慢、更稳。',
+          img: '手部特写。回放第二幕的重排动作，节奏更慢更稳，错位字回到原位。', dur: 10, aud: '字模归位的一声轻响（待配音）；其余留白。' },
+        { t: '「字因相聚而成篇，人也一样。」', s: '字幕：虚构台词。此处画面的句子直接取自当前观众所排的那一行字，实现叙事与操作的联动。',
+          img: '近景。画面上的句子直接取自观众当前所排的那一行字，实现叙事与操作联动。', dur: 5, aud: '台词配音（待录制）；口型帧待配音后制作。' },
+        { t: '最后一版印成时，晨光刚好落到纸角。故事到此结束：一次重新排版，把错位的字送回原地。', s: '缓慢拉远至全景，静止 3 秒后出标题卡与制作人员名单（署名见片尾）。',
+          img: '缓慢拉远至全景，静止 3 秒后接标题卡与制作人员名单（署名见片尾）。', dur: 11, aud: '收束环境音，配乐方案待定；片尾静音 3 秒。' }
+      ]
+    }
+  ];
+
+  /* ================= 2 · 字库数据（30 枚） ================= */
+  var GROUPS = [
+    { name: '工艺与材料', list: '印刷字模墨纸版木泥刀' },
+    { name: '时间与光', list: '夜晨光星灯影风雨' },
+    { name: '意象 · 关联 · 成句', list: '山海心梦因相聚而成篇重新' }
+  ];
+  var VERB = '印刷聚成重';                 /* 演示规则：动作字集合 */
+  var EMPTY = '而因相';                    /* 演示规则：虚词/关联字集合 */
+  var IMAGE = '山海心梦星灯影风雨光夜晨';  /* 演示规则：意象字集合 */
+  var MAX = 12;
+  var W = 600, H = 760;                    /* 纸面画布逻辑尺寸 */
+  var MARK = '活字的一夜 · 原型演示 · 非史料复刻';  /* 导出图说明行，防止被当作史料图像 */
+
+  /* ================= 3 · 运行时状态 ================= */
+  var line = Array.from('字因相聚而成篇');
+  var mode = 'v';                          /* v 竖排 / h 横排 */
+  var cur = { a: 0, l: 0 };
+  var timer = null, playing = false;
+  var dragFrom = -1;
+
+  /* ================= 4 · 小工具 ================= */
+  function $(s) { return document.querySelector(s); }
+  function reduce() { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+  function totalLines() { return ACTS.reduce(function (n, a) { return n + a.lines.length; }, 0); }
+  function globalIndex() {
+    var n = 0;
+    for (var i = 0; i < cur.a; i++) n += ACTS[i].lines.length;
+    return n + cur.l;
+  }
+  function safeName(s) {
+    return (s || '').replace(/[^\u4e00-\u9fa5A-Za-z0-9_-]/g, '_').slice(0, 40);
+  }
+
+  /* ================= 5 · 剧本渲染 ================= */
+  function renderActs() {
+    $('#acts').innerHTML = ACTS.map(function (a, i) {
+      return '<button class="actbtn" data-a="' + i + '" aria-current="' + (i === cur.a ? 'true' : 'false') + '">' + a.title.split(' · ')[0] + '</button>';
+    }).join('');
+    Array.prototype.forEach.call(document.querySelectorAll('.actbtn'), function (b) {
+      b.onclick = function () { jumpAct(+b.dataset.a); };
+    });
+  }
+
+  function renderBeat() {
+    var act = ACTS[cur.a], ln = act.lines[cur.l];
+    $('#beat').textContent = act.title;
+    $('#beatline').textContent = act.title + '　|　' + act.sub + '　|　本幕第 ' + (cur.l + 1) + ' / ' + act.lines.length + ' 句';
+    $('#sceneTitle').textContent = act.sub;
+    $('#sceneDesc').textContent = act.desc + ' ' + act.tempo;
+    if (reduce()) {
+      /* 减少动效：整幕静态分段一次呈现 */
+      $('#narrative').innerHTML = '<ol class="staticlines">' + act.lines.map(function (x) {
+        return '<li>' + x.t + '<span>镜头/节奏｜' + x.s + '</span></li>';
+      }).join('') + '</ol>';
+      $('#shotnote').textContent = '已按系统「减少动效」设置呈现：不做镜头运动，整幕文字一次列出。';
+      $('#hintbox').hidden = false;
+      $('#hintbox').textContent = '提示：当前为静态分段模式，自动播放已停用，请用「上一段 / 下一段 / 跳幕」逐句阅读。';
+    } else {
+      $('#narrative').innerHTML = '<p class="narrative">' + ln.t + '</p>';
+      $('#shotnote').textContent = ln.s;
+      $('#hintbox').hidden = true;
+    }
+    var pct = Math.round(globalIndex() / (totalLines() - 1) * 100);
+    $('#barfill').style.width = pct + '%';
+    $('#bar').setAttribute('aria-valuenow', String(pct));
+    /* 舞台视觉随幕次切换 */
+    $('#scene').className = 'scene act-' + (cur.a + 1);
+    $('#paper').classList.toggle('printed', cur.a >= 2);
+    $('#printed').textContent = line.join('') || '字在等候';
+    $('#printed').className = mode === 'v' ? 'v' : 'h';
+    $('#prev').disabled = (cur.a === 0 && cur.l === 0);
+    $('#next').disabled = (cur.a === ACTS.length - 1 && cur.l === ACTS[cur.a].lines.length - 1);
+  }
+
+  function go(a, l) { cur.a = a; cur.l = l; renderActs(); renderBeat(); }
+  function prevLine() {
+    if (cur.l > 0) go(cur.a, cur.l - 1);
+    else if (cur.a > 0) go(cur.a - 1, ACTS[cur.a - 1].lines.length - 1);
+    else return false;
+    return true;
+  }
+  function nextLine() {
+    if (cur.l < ACTS[cur.a].lines.length - 1) go(cur.a, cur.l + 1);
+    else if (cur.a < ACTS.length - 1) go(cur.a + 1, 0);
+    else return false;
+    return true;
+  }
+  function jumpAct(a) { stopPlay(); go(a, 0); }
+  function stopPlay() { if (timer) { clearTimeout(timer); timer = null; } playing = false; syncPlayBtn(); }
+  function syncPlayBtn() {
+    var b = $('#play');
+    if (reduce()) { b.disabled = true; b.textContent = '静态呈现（已减少动效）'; return; }
+    b.disabled = false;
+    b.textContent = playing ? '暂停播放' : (timer || globalIndex() > 0 ? '继续播放' : '播放短片');
+  }
+  /* 按文本长度估算每段停留时长 */
+  function step() {
+    if (!nextLine()) { stopPlay(); return; }
+    var len = ACTS[cur.a].lines[cur.l].t.length;
+    timer = setTimeout(step, Math.max(1800, Math.min(5200, 900 + len * 95)));
+  }
+  function togglePlay() {
+    if (reduce()) return;
+    if (playing) { stopPlay(); return; }
+    if (cur.a === ACTS.length - 1 && cur.l === ACTS[cur.a].lines.length - 1) go(0, 0);
+    playing = true; syncPlayBtn();
+    timer = setTimeout(step, 1600);
+  }
+
+  /* ================= 5b · 分镜脚本表：由剧本数据直接生成，避免文案与分镜不同步 ================= */
+  function renderStoryboard() {
+    var rows = '', total = 0;
+    ACTS.forEach(function (a, ai) {
+      a.lines.forEach(function (ln, li) {
+        total += ln.dur;
+        rows += '<tr>' +
+          '<td class="n">' + a.title.split(' · ')[0] + '</td>' +
+          '<td class="n">SC-0' + (ai + 1) + '-0' + (li + 1) + '</td>' +
+          '<td>' + ln.img + '</td>' +
+          '<td>' + ln.s + '</td>' +
+          '<td class="c">' + ln.t + '</td>' +
+          '<td class="n">' + ln.dur + '</td>' +
+          '<td>' + ln.aud + '</td>' +
+          '</tr>';
+      });
+    });
+    $('#shotBody').innerHTML = rows;
+    var m = Math.floor(total / 60), s = total % 60;
+    $('#shotTotal').textContent = total + ' 秒（约 ' + m + ' 分 ' + s + ' 秒）';
+  }
+
+  /* ================= 6 · 字库与句子 ================= */
+  function renderTypes() {
+    $('#types').innerHTML = GROUPS.map(function (g) {
+      return '<div class="tgroup"><label>' + g.name + '</label><div class="trow">' +
+        Array.from(g.list).map(function (ch) {
+          return '<button class="tile" draggable="true" data-c="' + ch + '" aria-label="加入字模 ' + ch + '">' + ch + '</button>';
+        }).join('') + '</div></div>';
+    }).join('');
+    Array.prototype.forEach.call(document.querySelectorAll('.tile'), function (b) {
+      b.onclick = function () { add(b.dataset.c); };
+      b.ondragstart = function (e) { e.dataTransfer.setData('text/plain', 'lib:' + b.dataset.c); e.dataTransfer.effectAllowed = 'copy'; };
+    });
+  }
+
+  function add(ch) {
+    if (line.length >= MAX) { checkSay('warn', '木盘最多容纳 ' + MAX + ' 枚字模；请先删除或用「校正」处理。'); return; }
+    line.push(ch); update();
+  }
+  function removeAt(i) { line.splice(i, 1); update(); }
+  function move(from, to) {
+    if (to < 0 || to >= line.length || from === to) return;
+    var c = line.splice(from, 1)[0]; line.splice(to, 0, c); update();
+    var el = document.querySelector('.chip[data-i="' + to + '"]'); if (el) el.focus();
+  }
+
+  function renderSentence() {
+    var box = $('#sentence');
+    if (!line.length) { box.innerHTML = '<span class="emptyhint">尚未排字：点选上方字模，或把字模拖到这里。</span>'; return; }
+    box.innerHTML = line.map(function (ch, i) {
+      return '<span class="chip" role="listitem" draggable="true" tabindex="0" data-i="' + i +
+        '" aria-label="第 ' + (i + 1) + ' 枚 ' + ch + '，方向键移动，Delete 删除">' + ch +
+        '<i class="idx">' + (i + 1) + '</i><button class="del" tabindex="-1" aria-hidden="true" data-i="' + i + '">×</button></span>';
+    }).join('');
+    Array.prototype.forEach.call(box.querySelectorAll('.chip'), bindChip);
+    Array.prototype.forEach.call(box.querySelectorAll('.del'), function (d) {
+      d.onclick = function (e) { e.stopPropagation(); removeAt(+d.dataset.i); };
+    });
+  }
+  /* 绑定单枚字模的拖拽与键盘操作 */
+  function bindChip(el) {
+    var i = +el.dataset.i;
+    el.ondragstart = function (e) { dragFrom = i; el.classList.add('drag'); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', 'mv:' + i); };
+    el.ondragend = function () { dragFrom = -1; el.classList.remove('drag'); };
+    el.ondragover = function (e) { e.preventDefault(); };
+    el.ondrop = function (e) {
+      e.preventDefault();
+      var d = e.dataTransfer.getData('text/plain') || '';
+      if (d.indexOf('mv:') === 0) move(+d.slice(3), i);
+      else if (d.indexOf('lib:') === 0) { add(d.slice(4)); }
+      else if (dragFrom > -1) move(dragFrom, i);
+    };
+    el.onkeydown = function (e) {
+      var j = +el.dataset.i;
+      if (e.key === 'ArrowRight') { e.preventDefault(); move(j, j + 1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); move(j, j - 1); }
+      else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); removeAt(j); }
+    };
+  }
+  /* 整条句子区接收来自字库的拖拽 */
+  $('#sentence').addEventListener('dragover', function (e) { e.preventDefault(); });
+  $('#sentence').addEventListener('drop', function (e) {
+    e.preventDefault();
+    var d = e.dataTransfer.getData('text/plain') || '';
+    if (d.indexOf('lib:') === 0) add(d.slice(4));
+  });
+
+  /* ================= 7 · 排版校验（演示规则） ================= */
+  function checkSay(level, text) {
+    var box = $('#check');
+    box.className = 'check' + (level === 'warn' ? ' warn' : '');
+    box.innerHTML = '<p class="crule' + (level === 'warn' ? ' warn' : '') + '">' + text + '</p>';
+  }
+  /* 汇总演示规则提示 */
+  function rules() {
+    var r = [], s = line.join('');
+    if (!line.length) return r;
+    if (line.length < 5) r.push(['warn', '字数 ' + line.length + '：演示规则建议一句 5 至 12 字，太短较难形成朗读节奏。']);
+    if (line.length > MAX) r.push(['warn', '字数 ' + line.length + '：已超过 ' + MAX + ' 枚字模容量，建议删减或点「校正」。']);
+    var seen = {}, dup = [];
+    line.forEach(function (c) { if (seen[c]) { if (dup.indexOf(c) < 0) dup.push(c); } seen[c] = 1; });
+    if (dup.length) r.push(['warn', '检测到重复字模：' + dup.join('、') + '。若不表示强调，可替换为别的字。']);
+    var last = line[line.length - 1];
+    if (EMPTY.indexOf(last) >= 0) r.push(['warn', '句末是「' + last + '」：演示规则建议在关联字之后补足实词，让句子收得住。']);
+    var hasVerb = line.some(function (c) { return VERB.indexOf(c) >= 0; });
+    if (!hasVerb) r.push(['warn', '本句未含动作字（参考：' + VERB + '）：演示规则建议至少保留一个过程动词。']);
+    var hasImg = line.some(function (c) { return IMAGE.indexOf(c) >= 0; });
+    if (!hasImg) r.push(['info', '本句未含意象字（参考：' + IMAGE + '）：可加入一两个意象字增强画面感。']);
+    return r;
+  }
+  function renderCheck() {
+    var rs = rules(), box = $('#check');
+    if (!rs.length) { box.className = 'check'; box.innerHTML = '<p class="crule">未触发演示规则提示。这是一行可用的句子。</p>'; return; }
+    box.className = 'check' + (rs.some(function (x) { return x[0] === 'warn'; }) ? ' warn' : '');
+    box.innerHTML = rs.map(function (x) { return '<p class="crule' + (x[0] === 'warn' ? ' warn' : '') + '">' + x[1] + '</p>'; }).join('');
+  }
+  /* 校正：按演示规则做确定性处理 */
+  function fix() {
+    var log = [], before = line.slice(), seen = {}, out = [];
+    before.forEach(function (c) { if (seen[c]) log.push('去除重复字「' + c + '」'); else { seen[c] = 1; out.push(c); } });
+    if (out.length && EMPTY.indexOf(out[out.length - 1]) >= 0) { log.push('移除句末关联字「' + out.pop() + '」'); }
+    if (out.length > MAX) { out = out.slice(0, MAX); log.push('超出 ' + MAX + ' 枚的部分已截去'); }
+    line = out.length ? out : [];
+    update();
+    checkSay('info', log.length ? '校正完成：' + log.join('；') + '。以上规则为演示规则，仅供参考，可继续手动调整。' : '当前句子未触发可校正项，可手动增删或拖拽调整顺序。');
+  }
+
+  /* ================= 8 · 印版 / 纸面绘制与导出 ================= */
+  /* 计算正文字在纸面上的坐标，供 Canvas 与 SVG 共用 */
+  function layout() {
+    var chars = Array.from(line.join(''));
+    if (!chars.length) chars = Array.from('字在等候');
+    var top = 130, bottom = H - 130, left = 62, right = W - 62;
+    var fam = '"Songti SC","SimSun","Source Han Serif SC","Noto Serif SC",serif', out = [];
+    if (mode === 'v') {
+      var cols = Math.max(1, Math.ceil(chars.length / 11));
+      var rows = Math.ceil(chars.length / cols), availH = bottom - top, availW = right - left;
+      var fs = Math.min(74, availH / (rows + 0.9), availW / (cols + 0.6));
+      var stepY = fs * 1.18, startY = top + (availH - rows * stepY) / 2 + fs * 0.86;
+      var stepX = fs * 1.5, startX = (W - cols * stepX) / 2 + stepX / 2;
+      chars.forEach(function (ch, i) {
+        var c = Math.floor(i / rows), r = i % rows;
+        out.push({ ch: ch, x: startX + (cols - 1 - c) * stepX, y: startY + r * stepY, fs: fs });
+      });
+    } else {
+      var per = Math.min(chars.length, 9), rws = Math.ceil(chars.length / per);
+      var aw = right - left, ah = bottom - top;
+      var f2 = Math.min(74, aw / (per + 0.6), ah / (rws + 0.8));
+      var sy = f2 * 1.25, y0 = top + (ah - rws * sy) / 2 + f2 * 0.86;
+      chars.forEach(function (ch, i) {
+        var rw = Math.floor(i / per), cx = i % per;
+        var rwLen = Math.min(per, chars.length - rw * per);
+        var x0 = (W - rwLen * f2 * 1.25) / 2 + f2 * 0.625;
+        out.push({ ch: ch, x: x0 + cx * f2 * 1.25, y: y0 + rw * sy, fs: f2 });
+      });
+    }
+    out.fam = fam;
+    return out;
+  }
+
+  function drawPaper() {
+    var cvs = $('#canvas'), ctx = cvs.getContext('2d'), S = 2;
+    cvs.width = W * S; cvs.height = H * S; ctx.setTransform(S, 0, 0, S, 0, 0);
+    var g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, '#f7eeda'); g.addColorStop(1, '#e8dbba');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    /* 纤维噪点 */
+    for (var i = 0; i < 1500; i++) {
+      ctx.fillStyle = 'rgba(126,104,72,' + (Math.random() * 0.05 + 0.012) + ')';
+      ctx.fillRect(Math.random() * W, Math.random() * H, 1.6, 1.1);
+    }
+    ctx.strokeStyle = '#8d6b45'; ctx.lineWidth = 2; ctx.strokeRect(28, 28, W - 56, H - 56);
+    ctx.lineWidth = 1; ctx.strokeRect(36, 36, W - 72, H - 72);
+    ctx.fillStyle = '#8b7a5c'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    ctx.font = '15px "Microsoft YaHei",sans-serif';
+    ctx.fillText('活字的一夜 · 试印 · 网页原型', W / 2, 74);
+    var lay = layout(), empty = !line.length;
+    lay.forEach(function (p) {
+      ctx.font = '600 ' + p.fs + 'px "Songti SC","SimSun","Source Han Serif SC","Noto Serif SC",serif';
+      ctx.fillStyle = empty ? '#b3a58a' : '#2a241e';
+      ctx.fillText(p.ch, p.x, p.y);
+    });
+    /* 朱印 */
+    ctx.fillStyle = '#a94334'; ctx.fillRect(W - 116, H - 116, 62, 62);
+    ctx.fillStyle = '#fdf6e7'; ctx.font = '600 30px "Songti SC",serif';
+    ctx.fillText('印', W - 116 + 31, H - 116 + 44);
+    ctx.fillStyle = '#8b7a5c'; ctx.font = '12px "Microsoft YaHei",sans-serif';
+    ctx.fillText('虚构演示 · 非文物', W / 2, H - 60);
+    /* 左下角水印式说明行：导出图不应被当作史料图像使用 */
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#a8997c'; ctx.font = '11px "Microsoft YaHei",sans-serif';
+    ctx.fillText(MARK, 46, H - 40);
+    ctx.textAlign = 'center';
+  }
+
+  function buildSVG() {
+    var lay = layout(), txt = line.join('') || '字在等候';
+    var s = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    s += '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '">\n';
+    s += '<defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">';
+    s += '<stop offset="0" stop-color="#f7eeda"/><stop offset="1" stop-color="#e8dbba"/></linearGradient></defs>\n';
+    s += '<rect width="' + W + '" height="' + H + '" fill="url(#pg)"/>\n';
+    s += '<rect x="28" y="28" width="' + (W - 56) + '" height="' + (H - 56) + '" fill="none" stroke="#8d6b45" stroke-width="2"/>\n';
+    s += '<rect x="36" y="36" width="' + (W - 72) + '" height="' + (H - 72) + '" fill="none" stroke="#8d6b45" stroke-width="1"/>\n';
+    s += '<text x="' + (W / 2) + '" y="74" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#8b7a5c">活字的一夜 · 试印 · 网页原型</text>\n';
+    lay.forEach(function (p) {
+      s += '<text x="' + p.x.toFixed(1) + '" y="' + p.y.toFixed(1) + '" text-anchor="middle" font-family="Songti SC,SimSun,serif" font-size="' + p.fs.toFixed(1) + '" fill="' + (line.length ? '#2a241e' : '#b3a58a') + '">' + p.ch + '</text>\n';
+    });
+    s += '<rect x="' + (W - 116) + '" y="' + (H - 116) + '" width="62" height="62" fill="#a94334"/>\n';
+    s += '<text x="' + (W - 85) + '" y="' + (H - 72) + '" text-anchor="middle" font-family="Songti SC,serif" font-size="30" fill="#fdf6e7">印</text>\n';
+    s += '<text x="' + (W / 2) + '" y="' + (H - 60) + '" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#8b7a5c">虚构演示 · 非文物</text>\n';
+    s += '<text x="' + (W / 2) + '" y="' + (H - 40) + '" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#a8997c">' + txt + '</text>\n';
+    /* 左下角水印式说明行，与 PNG 导出保持一致 */
+    s += '<text x="46" y="' + (H - 40) + '" text-anchor="start" font-family="sans-serif" font-size="11" fill="#a8997c">' + MARK + '</text>\n';
+    s += '</svg>';
+    return s;
+  }
+
+  function download(blob, name) {
+    var a = document.createElement('a'), url = URL.createObjectURL(blob);
+    a.href = url; a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 800);
+  }
+  function exportPNG() {
+    var cvs = $('#canvas');
+    if (typeof cvs.toBlob !== 'function') { checkSay('warn', '当前浏览器不支持 Canvas 导出，请更换浏览器重试。'); return; }
+    cvs.toBlob(function (b) {
+      if (!b) { checkSay('warn', 'PNG 导出失败，请重试。'); return; }
+      download(b, '活字的一夜_试印_' + safeName(line.join('') || '空盘') + '.png');
+    }, 'image/png');
+  }
+  function exportSVG() {
+    download(new Blob([buildSVG()], { type: 'image/svg+xml;charset=utf-8' }), '活字的一夜_试印_' + safeName(line.join('') || '空盘') + '.svg');
+  }
+  function copySVG() {
+    var s = buildSVG();
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(s).then(function () { checkSay('info', 'SVG 源码已复制到剪贴板。'); }, fallback);
+      } else fallback();
+    } catch (e) { fallback(); }
+    function fallback() {
+      var ta = $('#svgText'); ta.value = s;
+      var d = document.querySelector('details.src'); if (d) d.open = true;
+      ta.focus(); ta.select();
+      checkSay('info', '已展开下方 SVG 源码，请按 Ctrl/Cmd + C 复制。');
+    }
+  }
+
+  /* ================= 9 · 统一刷新 ================= */
+  function update() {
+    /* 舞台字盘取前 4 枚做视觉呼应 */
+    $('#tray').innerHTML = [0, 1, 2, 3].map(function (i) {
+      return line[i] ? '<span class="glyph">' + line[i] + '</span>' : '<span class="glyph empty">字</span>';
+    }).join('');
+    renderSentence();
+    $('#charCount').textContent = line.length + ' / ' + MAX + ' 字模';
+    $('#orderText').textContent = line.length ? ('字序：' + line.map(function (c, i) { return (i + 1) + '.' + c; }).join(' ')) : '';
+    $('#sentence').classList.toggle('over', line.length > MAX);
+    /* 印版：反字，整体镜像由 CSS scaleX(-1) 完成 */
+    var bf = $('#blockface');
+    bf.className = 'blockface' + (mode === 'v' ? ' v' : '');
+    bf.innerHTML = line.length
+      ? line.map(function (c) { return '<span class="blk">' + c + '</span>'; }).join('')
+      : '<span class="emptyhint" style="color:#e2c9a8">印版尚无字模。</span>';
+    drawPaper();
+    $('#svgText').value = buildSVG();
+    renderCheck();
+    renderBeat();
+  }
+
+  /* ================= 10 · 抽屉：打开/关闭/焦点 ================= */
+  var lastFocus = null;
+  function openDrawer() {
+    lastFocus = document.activeElement;
+    $('#drawer').dataset.open = 'true'; $('#mask').dataset.open = 'true';
+    $('#drawer').setAttribute('aria-hidden', 'false');
+    $('#closeInfo').focus();
+  }
+  function closeDrawer() {
+    $('#drawer').dataset.open = 'false'; $('#mask').dataset.open = 'false';
+    $('#drawer').setAttribute('aria-hidden', 'true');
+    if (lastFocus) lastFocus.focus();
+  }
+  function drawerOpen() { return $('#drawer').dataset.open === 'true'; }
+  function trap(e) {
+    if (e.key !== 'Tab') return;
+    var f = Array.prototype.filter.call($('#drawer').querySelectorAll('button, [href], textarea, [tabindex]:not([tabindex="-1"])'),
+      function (el) { return el.offsetParent !== null; });
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+
+  /* ================= 11 · 事件绑定与初始化 ================= */
+  renderTypes();
+  $('#play').onclick = togglePlay;
+  $('#prev').onclick = function () { stopPlay(); prevLine(); };
+  $('#next').onclick = function () { stopPlay(); nextLine(); };
+  $('#replay').onclick = function () { stopPlay(); go(0, 0); };
+  $('#toggleMode').onclick = function () { mode = (mode === 'v' ? 'h' : 'v'); update(); };
+  $('#checkBtn').onclick = function () {
+    if (!line.length) { checkSay('info', '请先排出至少一个字模，再进行校验。'); return; }
+    renderCheck();
+    if (!rules().some(function (x) { return x[0] === 'warn'; })) checkSay('info', '未触发警告级规则。当前句子可作为试印内容。');
+  };
+  $('#fixBtn').onclick = fix;
+  $('#clearBtn').onclick = function () { line = []; update(); checkSay('info', '已清空木盘，请重新排字。'); };
+  $('#printBtn').onclick = function () {
+    $('#paper').classList.remove('printed'); void $('#paper').offsetWidth; $('#paper').classList.add('printed');
+    update();
+    checkSay('info', '试印完成：左侧为印版反字，右侧为纸面正字（Canvas 绘制）。可导出 PNG 或 SVG。');
+  };
+  $('#pngBtn').onclick = exportPNG;
+  $('#svgBtn').onclick = exportSVG;
+  $('#copyBtn').onclick = copySVG;
+  /* 抽屉顶部跳转：先关闭抽屉，再滚动到页面分区并把焦点交给该分区 */
+  Array.prototype.forEach.call(document.querySelectorAll('[data-jump]'), function (b) {
+    b.onclick = function () {
+      var el = document.querySelector(b.dataset.jump);
+      closeDrawer();
+      if (!el) return;
+      el.scrollIntoView({ behavior: reduce() ? 'auto' : 'smooth', block: 'start' });
+      el.focus();
+    };
+  });
+  $('#openInfo').onclick = openDrawer;
+  $('#closeInfo').onclick = closeDrawer;
+  $('#mask').onclick = closeDrawer;
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && drawerOpen()) { closeDrawer(); return; }
+    if (drawerOpen()) trap(e);
+  });
+  window.addEventListener('resize', function () { clearTimeout(window.__rz); window.__rz = setTimeout(drawPaper, 200); });
+
+  renderStoryboard();
+  go(0, 0);
+  update();
+  syncPlayBtn();
+})();
+</script>
+</body>
+</html>
